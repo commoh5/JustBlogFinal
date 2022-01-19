@@ -1,0 +1,78 @@
+﻿@model IEnumerable<JustBlog_Final.Models.Comment>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<h2>Comment manage</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<div>
+    <table id="grid"></table>
+    <div id="pager"></div>
+</div>
+@section scripts{
+
+    <script>
+    $(function () {
+        $("#grid").jqGrid({
+            url: '@Url.Action("GetData", "Comments")',
+            datatype: "json",
+            mtype: "Get",
+            colModel: [
+                { label: "Id", name: "Id", key: true, index: "Id",width:50/*,editable:true*/ },
+                { label: "Name", name: "Name", index: "Name", width: 150 },
+                { label: "Email", name: "Email", index: "Email", width: 240 },
+                { label: "PostId", name: "PostId", index: "PostId", width: 90 },
+                { label: "Header", name: "CommentHeader", index: "CommentHeader", width: 150 },
+                { label: "Text", name: "CommentText", index: "CommentText", width: 200 },
+                { label: "Time", name: "CommentTime", index: "CommentTime", formatter: "date", formatoptions: { srcformat: 'm/d/Y', newformat: 'm/d/Y' } },
+                
+                { label: 'action', name: 'Id', formatter: formatUpdate, width: 70 },
+                { label: 'action', name: 'Id', formatter: formatDelete, width: 70 },
+                { label: 'action', name: 'Id', formatter: formatDetails, width: 70 }
+            ],
+            height: "auto",
+            width: 1060,
+            rowNum: 10,
+            loadonce: true,
+            rowList: [10, 20, 30],
+            pager: "#pager",
+            sortName: "Id",
+            viewrecords: true,
+            sortorder: "asc",
+            caption: "List of post",
+            emptyrecords: "No records to display",
+            jsonreader: {
+                repeatitems: false,
+                Id:"0"
+            },
+            multiselect: false,
+        }).navGrid('#pager', { edit: false, add: false, del: false, search: true, refresh: true },
+            {},
+            {},
+            {},
+            {
+                //SEARCH
+                width: 720,
+                multipleSearch: true
+            })
+
+    })
+        function formatDetails(cellvalue) {
+            return '<button class="btn btn-warning"><a href=/Comments/details/?id=" + cellvalue + ">Details</a></button>'
+        }
+
+        function formatUpdate(cellvalue) {
+            return '<a href=/Comments/edit/?id=' + cellvalue + '>Update</a>'
+        }
+
+        function formatDelete(cellvalue) {
+            return '<a href=/Comments/delete/?id=' + cellvalue + '>Delete</a>'
+        }
+
+    </script>
+}

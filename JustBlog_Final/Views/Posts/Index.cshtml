@@ -1,0 +1,80 @@
+﻿@model IEnumerable<JustBlog_Final.Models.Post>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Admin.cshtml";
+}
+
+<h2>Post manage</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<div>
+    <table id="grid"></table>
+    <div id="pager"></div>
+</div>
+@section scripts{
+    
+    <script>
+    $(function () {
+        $("#grid").jqGrid({
+            url: '@Url.Action("GetData", "Posts")',
+            datatype: "json",
+            mtype: "Get",
+            colModel: [
+                { label: "Id", name: "Id", key: true, index: "Id",width:50/*,editable:true*/ },
+                { label: "Title", name: "Title", index: "Title", editable: true, width: 150 },
+                { label: "Description", name: "ShortDescription", index: "ShortDescription", width: 200 },
+                { label: "Content", name: "PostContent", index: "PostContent", width: 250 },
+                { label: "Url", name: "UrlSlug", index: "UrlSlug" },
+                { label: "Published", name: "Published", index: "Published" },
+                { label: "PostedOn", name: "PostedOn", index: "PostedOn", width: 170, formatter: "date", formatoptions: { srcformat: 'm/d/Y', newformat: 'm/d/Y' } },
+                { label: "Modified", name: "Modified", index: "Modified", formatter: "date", formatoptions: { srcformat: 'm/d/Y', newformat: 'm/d/Y' } },
+                { label: "Views", name: "ViewCount", index: "ViewCount", width: 80 },
+                { label: 'action', name: 'Id', formatter: formatUpdate, width: 70 },
+                { label: 'action', name: 'Id', formatter: formatDelete, width: 70 },
+                { label: 'action', name: 'Id', formatter: formatDetails, width: 70 }
+            ],
+            height: "auto",
+            width: 1060,
+            rowNum: 10,
+            loadonce: true,
+            rowList: [10, 20, 30],
+            pager: "#pager",
+            sortName: "Id",
+            viewrecords: true,
+            sortorder: "asc",
+            caption: "List of post",
+            emptyrecords: "No records to display",
+            jsonreader: {
+                repeatitems: false,
+                Id:"0"
+            },
+            multiselect: false,
+        }).navGrid('#pager', { edit: false, add: false, del: false, search: true, refresh: true },
+            {},
+            {},
+            {},
+            {
+                //SEARCH
+                width: 720,
+                multipleSearch: true
+            })
+
+    })
+        function formatDetails(cellvalue) {
+            return "<a href=/posts/details/?id=" + cellvalue + ">Details</a>"
+        }
+
+        function formatUpdate(cellvalue) {
+            return '<a href=/posts/edit/?id=' + cellvalue + '>Update</a>'
+        }
+
+        function formatDelete(cellvalue) {
+            return '<a href=/posts/delete/?id=' + cellvalue + '>Delete</a>'
+        }
+        
+    </script>
+}
