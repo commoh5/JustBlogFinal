@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewBag.Title = "UnAuthorized";
+}
+
+<h2>UnAuthorized</h2>
+<div style="margin-top:20%;padding:30px 10px 30px 10px;border:solid 1px #a3a3a3;border-radius:5px">
+    <h3 class="text-center">Because of your role, you cannot access to this function</h3>
+    <div class="text-center">
+        @Html.ActionLink("Back to List", "index", "Posts", new { @class = "btn btn-outline-secondary" })
+    </div>
+</div>

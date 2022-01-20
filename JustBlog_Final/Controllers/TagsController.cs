@@ -7,10 +7,12 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using IdentitySample.Models;
+using JustBlog_Final.Infrastructure;
 using JustBlog_Final.Models;
 
 namespace JustBlog_Final.Controllers
 {
+    [CustomAuthenticationFilter]
     public class TagsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -39,12 +41,14 @@ namespace JustBlog_Final.Controllers
             }
         }
         // GET: Tags
+        [CustomAuthorize("User", "Contributor", "BlogOwner")]
         public ActionResult Index()
         {
             return View();
         }
 
         // GET: Tags/Details/5
+        [CustomAuthorize("User", "Contributor", "BlogOwner")]
         public ActionResult Details(string id)
         {
             if (id == null)
@@ -60,6 +64,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Tags/Create
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Create()
         {
             return View();
@@ -71,6 +76,7 @@ namespace JustBlog_Final.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Create([Bind(Include = "Name,Count,UrlSlug,Description")] Tag tag)
         {
             if (ModelState.IsValid)
@@ -84,7 +90,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Tags/Edit/5
-        
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -105,6 +111,7 @@ namespace JustBlog_Final.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Edit([Bind(Include = "Name,Count,UrlSlug,Description")] Tag tag)
         {
             if (ModelState.IsValid)
@@ -117,6 +124,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Tags/Delete/5
+        [CustomAuthorize("BlogOwner")]
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -134,6 +142,7 @@ namespace JustBlog_Final.Controllers
         // POST: Tags/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize("BlogOwner")]
         public ActionResult DeleteConfirmed(string id)
         {
             Tag tag = db.Tags.Find(id);
@@ -149,6 +158,11 @@ namespace JustBlog_Final.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public ActionResult UnAuthorized()
+        {
+            ViewBag.Message = "Un Authorized Page!";
+            return View();
         }
     }
 }

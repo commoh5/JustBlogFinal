@@ -7,10 +7,12 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using IdentitySample.Models;
+using JustBlog_Final.Infrastructure;
 using JustBlog_Final.Models;
 
 namespace JustBlog_Final.Controllers
 {
+    [CustomAuthenticationFilter]
     public class CommentsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -39,6 +41,7 @@ namespace JustBlog_Final.Controllers
             }
         }
         // GET: Comments
+        [CustomAuthorize("User", "Contributor", "BlogOwner")]
         public ActionResult Index()
         {
             var comments = db.Comments.Include(c => c.Post);
@@ -46,6 +49,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Comments/Details/5
+        [CustomAuthorize("User", "Contributor", "BlogOwner")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -61,6 +65,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Comments/Create
+        [CustomAuthorize("BlogOwner")]
         public ActionResult Create()
         {
             ViewBag.PostId = new SelectList(db.Postss, "Id", "Title");
@@ -72,6 +77,7 @@ namespace JustBlog_Final.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize("BlogOwner")]
         public ActionResult Create([Bind(Include = "Id,Name,Email,PostId,CommentHeader,CommentText,CommentTime")] Comment comment)
         {
             if (ModelState.IsValid)
@@ -86,6 +92,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Comments/Edit/5
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -106,6 +113,7 @@ namespace JustBlog_Final.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Edit([Bind(Include = "Id,Name,Email,PostId,CommentHeader,CommentText,CommentTime")] Comment comment)
         {
             if (ModelState.IsValid)
@@ -119,6 +127,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Comments/Delete/5
+        [CustomAuthorize("BlogOwner")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -136,6 +145,7 @@ namespace JustBlog_Final.Controllers
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize("BlogOwner")]
         public ActionResult DeleteConfirmed(int id)
         {
             Comment comment = db.Comments.Find(id);
@@ -151,6 +161,11 @@ namespace JustBlog_Final.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public ActionResult UnAuthorized()
+        {
+            ViewBag.Message = "Un Authorized Page!";
+            return View();
         }
     }
 }

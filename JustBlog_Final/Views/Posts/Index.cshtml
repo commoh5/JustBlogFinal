@@ -16,7 +16,7 @@
     <div id="pager"></div>
 </div>
 @section scripts{
-    
+
     <script>
     $(function () {
         $("#grid").jqGrid({
@@ -64,6 +64,7 @@
             })
 
     })
+
         function formatDetails(cellvalue) {
             return "<a href=/posts/details/?id=" + cellvalue + ">Details</a>"
         }
@@ -75,6 +76,11 @@
         function formatDelete(cellvalue) {
             return '<a href=/posts/delete/?id=' + cellvalue + '>Delete</a>'
         }
-        
+
     </script>
 }
+@*<div>
+    <br />
+    <h2>Most View Post</h2>
+    @Html.Action("MostViewPost", "Posts")
+</div>*@

@@ -35,9 +35,11 @@ namespace JustBlog_Final.Models
 
         [Display(Name = "Posted On")]
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime PostedOn { get; set; }
 
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? Modified { get; set; }
 
         [ForeignKey("Category")]

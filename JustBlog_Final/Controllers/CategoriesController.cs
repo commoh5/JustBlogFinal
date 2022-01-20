@@ -7,10 +7,12 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using IdentitySample.Models;
+using JustBlog_Final.Infrastructure;
 using JustBlog_Final.Models;
 
 namespace JustBlog_Final.Controllers
 {
+    [CustomAuthenticationFilter]
     public class CategoriesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -39,12 +41,14 @@ namespace JustBlog_Final.Controllers
             }
         }
         // GET: Categories
+        [CustomAuthorize("User", "Contributor", "BlogOwner")]
         public ActionResult Index()
         {
             return View();
         }
 
         // GET: Categories/Details/5
+        [CustomAuthorize("User", "Contributor", "BlogOwner")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -60,6 +64,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Categories/Create
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Create()
         {
             return View();
@@ -71,6 +76,7 @@ namespace JustBlog_Final.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Create([Bind(Include = "Id,Name,UrlSlug,Description")] Category category)
         {
             if (ModelState.IsValid)
@@ -85,7 +91,7 @@ namespace JustBlog_Final.Controllers
 
         // GET: Categories/Edit/5
 
-        
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -106,6 +112,7 @@ namespace JustBlog_Final.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
+        [CustomAuthorize("Contributor", "BlogOwner")]
         public ActionResult Edit([Bind(Include = "Id,Name,UrlSlug,Description")] Category category)
         {
             if (ModelState.IsValid)
@@ -118,6 +125,7 @@ namespace JustBlog_Final.Controllers
         }
 
         // GET: Categories/Delete/5
+        [CustomAuthorize("BlogOwner")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -135,6 +143,7 @@ namespace JustBlog_Final.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize("BlogOwner")]
         public ActionResult DeleteConfirmed(int id)
         {
             Category category = db.Categories.Find(id);
@@ -150,6 +159,11 @@ namespace JustBlog_Final.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public ActionResult UnAuthorized()
+        {
+            ViewBag.Message = "Un Authorized Page!";
+            return View();
         }
     }
 }
